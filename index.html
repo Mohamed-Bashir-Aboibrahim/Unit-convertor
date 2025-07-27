@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unit Converter</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            color: #2b2d42;
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.night-mode {
+            background-color: #121212;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+
+        .logo i {
+            font-size: 2rem;
+            color: #4361ee;
+        }
+
+        body.night-mode .logo i {
+            color: #7f9cf5;
+        }
+
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(45deg, #4361ee, #f72585);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+
+        body.night-mode h1 {
+            background: linear-gradient(45deg, #7f9cf5, #f78fb3);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        .converter-box {
+            background-color: #ffffff;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        body.night-mode .converter-box {
+            background-color: #1e1e1e;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        .category-selector {
+            margin-bottom: 1.5rem;
+        }
+
+        .category-selector label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #2b2d42;
+        }
+
+        body.night-mode .category-selector label {
+            color: #e0e0e0;
+        }
+
+        .category-selector select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border-radius: 0.5rem;
+            border: 1px solid #dee2e6;
+            background-color: #ffffff;
+            color: #2b2d42;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+
+        body.night-mode .category-selector select {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            border-color: #444;
+        }
+
+        .category-selector select:focus {
+            outline: none;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        body.night-mode .category-selector select:focus {
+            border-color: #7f9cf5;
+            box-shadow: 0 0 0 3px rgba(127, 156, 245, 0.3);
+        }
+
+        .input-group, .output-group {
+            display: flex;
+            margin: 1rem 0;
+        }
+
+        .input-group input, .output-group input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0.5rem 0 0 0.5rem;
+            font-size: 1rem;
+            background-color: #ffffff;
+            color: #2b2d42;
+        }
+
+        body.night-mode .input-group input,
+        body.night-mode .output-group input {
+            background-color: #2d2d2d;
+            color: #e0e0e0;
+            border-color: #444;
+        }
+
+        .input-group input:focus, .output-group input:focus {
+            outline: none;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        body.night-mode .input-group input:focus,
+        body.night-mode .output-group input:focus {
+            border-color: #7f9cf5;
+            box-shadow: 0 0 0 3px rgba(127, 156, 245, 0.3);
+        }
+
+        .input-group select, .output-group select {
+            padding: 0.8rem 1rem;
+            border: 1px solid #dee2e6;
+            border-radius: 0 0.5rem 0.5rem 0;
+            background-color: #f8f9fa;
+            color: #2b2d42;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        body.night-mode .input-group select,
+        body.night-mode .output-group select {
+            background-color: #3d3d3d;
+            color: #e0e0e0;
+            border-color: #444;
+        }
+
+        .input-group select:focus, .output-group select:focus {
+            outline: none;
+            border-color: #4361ee;
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        body.night-mode .input-group select:focus,
+        body.night-mode .output-group select:focus {
+            border-color: #7f9cf5;
+            box-shadow: 0 0 0 3px rgba(127, 156, 245, 0.3);
+        }
+
+        .swap-btn {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+        }
+
+        .swap-btn button {
+            background-color: #4361ee;
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+
+        body.night-mode .swap-btn button {
+            background-color: #7f9cf5;
+            box-shadow: 0 4px 10px rgba(127, 156, 245, 0.3);
+        }
+
+        .swap-btn button:hover {
+            background-color: #3a56d4;
+        }
+
+        body.night-mode .swap-btn button:hover {
+            background-color: #6a89e8;
+        }
+
+        .swap-btn i {
+            font-size: 1.2rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background-color: #4361ee;
+            color: white;
+            box-shadow: 0 4px 10px rgba(67, 97, 238, 0.3);
+        }
+
+        body.night-mode .btn-primary {
+            background-color: #7f9cf5;
+            box-shadow: 0 4px 10px rgba(127, 156, 245, 0.3);
+        }
+
+        .btn-primary:hover {
+            background-color: #3a56d4;
+        }
+
+        body.night-mode .btn-primary:hover {
+            background-color: #6a89e8;
+        }
+
+        .btn-secondary {
+            background-color: #f72585;
+            color: white;
+            box-shadow: 0 4px 10px rgba(248, 37, 133, 0.3);
+        }
+
+        body.night-mode .btn-secondary {
+            background-color: #f78fb3;
+            box-shadow: 0 4px 10px rgba(247, 143, 179, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background-color: #e5177b;
+        }
+
+        body.night-mode .btn-secondary:hover {
+            background-color: #f57ba8;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #2b2d42;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        body.night-mode .theme-toggle {
+            color: #e0e0e0;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        body.night-mode .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .converter-box {
+                padding: 1.5rem;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-exchange-alt"></i>
+                <h1>Unit Converter</h1>
+            </div>
+            <button class="theme-toggle" id="theme-toggle">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <main>
+            <div class="converter-box">
+                <div class="category-selector">
+                    <label for="category">Select Category:</label>
+                    <select id="category">
+                        <option value="area">Area</option>
+                        <option value="digital">Digital Storage</option>
+                        <option value="length">Length</option>
+                        <option value="speed">Speed</option>
+                        <option value="temperature">Temperature</option>
+                        <option value="time">Time</option>
+                        <option value="volume">Volume</option>
+                        <option value="weight">Weight</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <input type="number" id="input-value" placeholder="Enter value">
+                    <select id="input-unit"></select>
+                </div>
+
+                <div class="swap-btn">
+                    <button id="swap-btn">
+                        <i class="fas fa-exchange-alt"></i>
+                    </button>
+                </div>
+
+                <div class="output-group">
+                    <input type="number" id="output-value" placeholder="Result" readonly>
+                    <select id="output-unit"></select>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="convert-btn" class="btn-primary">
+                        <i class="fas fa-calculator"></i> Convert
+                    </button>
+                    <button id="reset-btn" class="btn-secondary">
+                        <i class="fas fa-redo"></i> Reset
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const elements = {
+                inputValue: document.getElementById('input-value'),
+                outputValue: document.getElementById('output-value'),
+                convertBtn: document.getElementById('convert-btn'),
+                resetBtn: document.getElementById('reset-btn'),
+                categorySelect: document.getElementById('category'),
+                inputUnit: document.getElementById('input-unit'),
+                outputUnit: document.getElementById('output-unit'),
+                swapBtn: document.getElementById('swap-btn'),
+                themeToggle: document.getElementById('theme-toggle'),
+                body: document.body
+            };
+
+            const units = {
+                area: [
+                    { name: 'square inch', symbol: 'in²', conversions: { 'square inch': 1, 'square foot': 0.00694444, 'square yard': 0.000771605, 'square meter': 0.00064516, 'acre': 0.000000159423, 'square mile': 0.000000000249098, 'square kilometer': 0.00000000064516 } },
+                    { name: 'square foot', symbol: 'ft²', conversions: { 'square inch': 144, 'square foot': 1, 'square yard': 0.111111, 'square meter': 0.092903, 'acre': 0.0000229568, 'square mile': 0.0000000358701, 'square kilometer': 0.000000092903 } },
+                    { name: 'square yard', symbol: 'yd²', conversions: { 'square inch': 1296, 'square foot': 9, 'square yard': 1, 'square meter': 0.836127, 'acre': 0.000206612, 'square mile': 0.000000322831, 'square kilometer': 0.000000836127 } },
+                    { name: 'square meter', symbol: 'm²', conversions: { 'square inch': 1550, 'square foot': 10.7639, 'square yard': 1.19599, 'square meter': 1, 'acre': 0.000247105, 'square mile': 0.000000386102, 'square kilometer': 0.000001 } },
+                    { name: 'acre', symbol: 'ac', conversions: { 'square inch': 6272640, 'square foot': 43560, 'square yard': 4840, 'square meter': 4046.86, 'acre': 1, 'square mile': 0.0015625, 'square kilometer': 0.00404686 } },
+                    { name: 'square mile', symbol: 'mi²', conversions: { 'square inch': 4014489600, 'square foot': 27878400, 'square yard': 3097600, 'square meter': 2589990, 'acre': 640, 'square mile': 1, 'square kilometer': 2.58999 } },
+                    { name: 'square kilometer', symbol: 'km²', conversions: { 'square inch': 1550000000, 'square foot': 10763900, 'square yard': 1195990, 'square meter': 1000000, 'acre': 247.105, 'square mile': 0.386102, 'square kilometer': 1 } }
+                ],
+                digital: [
+                    { name: 'bit', symbol: 'b', conversions: { 'bit': 1, 'byte': 0.125, 'kilobit': 0.001, 'kilobyte': 0.000125, 'megabit': 0.000001, 'megabyte': 0.000000125, 'gigabit': 0.000000001, 'gigabyte': 0.000000000125, 'terabit': 0.000000000001, 'terabyte': 0.000000000000125 } },
+                    { name: 'byte', symbol: 'B', conversions: { 'bit': 8, 'byte': 1, 'kilobit': 0.008, 'kilobyte': 0.001, 'megabit': 0.000008, 'megabyte': 0.000001, 'gigabit': 0.000000008, 'gigabyte': 0.000000001, 'terabit': 0.000000000008, 'terabyte': 0.000000000001 } },
+                    { name: 'kilobit', symbol: 'kb', conversions: { 'bit': 1000, 'byte': 125, 'kilobit': 1, 'kilobyte': 0.125, 'megabit': 0.001, 'megabyte': 0.000125, 'gigabit': 0.000001, 'gigabyte': 0.000000125, 'terabit': 0.000000001, 'terabyte': 0.000000000125 } },
+                    { name: 'kilobyte', symbol: 'kB', conversions: { 'bit': 8000, 'byte': 1000, 'kilobit': 8, 'kilobyte': 1, 'megabit': 0.008, 'megabyte': 0.001, 'gigabit': 0.000008, 'gigabyte': 0.000001, 'terabit': 0.000000008, 'terabyte': 0.000000001 } },
+                    { name: 'megabit', symbol: 'Mb', conversions: { 'bit': 1000000, 'byte': 125000, 'kilobit': 1000, 'kilobyte': 125, 'megabit': 1, 'megabyte': 0.125, 'gigabit': 0.001, 'gigabyte': 0.000125, 'terabit': 0.000001, 'terabyte': 0.000000125 } },
+                    { name: 'megabyte', symbol: 'MB', conversions: { 'bit': 8000000, 'byte': 1000000, 'kilobit': 8000, 'kilobyte': 1000, 'megabit': 8, 'megabyte': 1, 'gigabit': 0.008, 'gigabyte': 0.001, 'terabit': 0.000008, 'terabyte': 0.000001 } },
+                    { name: 'gigabit', symbol: 'Gb', conversions: { 'bit': 1000000000, 'byte': 125000000, 'kilobit': 1000000, 'kilobyte': 125000, 'megabit': 1000, 'megabyte': 125, 'gigabit': 1, 'gigabyte': 0.125, 'terabit': 0.001, 'terabyte': 0.000125 } },
+                    { name: 'gigabyte', symbol: 'GB', conversions: { 'bit': 8000000000, 'byte': 1000000000, 'kilobit': 8000000, 'kilobyte': 1000000, 'megabit': 8000, 'megabyte': 1000, 'gigabit': 8, 'gigabyte': 1, 'terabit': 0.008, 'terabyte': 0.001 } },
+                    { name: 'terabit', symbol: 'Tb', conversions: { 'bit': 1000000000000, 'byte': 125000000000, 'kilobit': 1000000000, 'kilobyte': 125000000, 'megabit': 1000000, 'megabyte': 125000, 'gigabit': 1000, 'gigabyte': 125, 'terabit': 1, 'terabyte': 0.125 } },
+                    { name: 'terabyte', symbol: 'TB', conversions: { 'bit': 8000000000000, 'byte': 1000000000000, 'kilobit': 8000000000, 'kilobyte': 1000000000, 'megabit': 8000000, 'megabyte': 1000000, 'gigabit': 8000, 'gigabyte': 1000, 'terabit': 8, 'terabyte': 1 } }
+                ],
+                length: [
+                    { name: 'inch', symbol: 'in', conversions: { 'inch': 1, 'foot': 0.0833333, 'yard': 0.0277778, 'meter': 0.0254, 'mile': 0.0000157828, 'kilometer': 0.0000254 } },
+                    { name: 'foot', symbol: 'ft', conversions: { 'inch': 12, 'foot': 1, 'yard': 0.333333, 'meter': 0.3048, 'mile': 0.000189394, 'kilometer': 0.0003048 } },
+                    { name: 'yard', symbol: 'yd', conversions: { 'inch': 36, 'foot': 3, 'yard': 1, 'meter': 0.9144, 'mile': 0.000568182, 'kilometer': 0.0009144 } },
+                    { name: 'meter', symbol: 'm', conversions: { 'inch': 39.3701, 'foot': 3.28084, 'yard': 1.09361, 'meter': 1, 'mile': 0.000621371, 'kilometer': 0.001 } },
+                    { name: 'mile', symbol: 'mi', conversions: { 'inch': 63360, 'foot': 5280, 'yard': 1760, 'meter': 1609.34, 'mile': 1, 'kilometer': 1.60934 } },
+                    { name: 'kilometer', symbol: 'km', conversions: { 'inch': 39370.1, 'foot': 3280.84, 'yard': 1093.61, 'meter': 1000, 'mile': 0.621371, 'kilometer': 1 } }
+                ],
+                speed: [
+                    { name: 'foot per second', symbol: 'ft/s', conversions: { 'foot per second': 1, 'meter per second': 0.3048, 'kilometer per hour': 1.09728, 'mile per hour': 0.681818, 'knot': 0.592484 } },
+                    { name: 'meter per second', symbol: 'm/s', conversions: { 'foot per second': 3.28084, 'meter per second': 1, 'kilometer per hour': 3.6, 'mile per hour': 2.23694, 'knot': 1.94384 } },
+                    { name: 'kilometer per hour', symbol: 'km/h', conversions: { 'foot per second': 0.911344, 'meter per second': 0.277778, 'kilometer per hour': 1, 'mile per hour': 0.621371, 'knot': 0.539957 } },
+                    { name: 'mile per hour', symbol: 'mph', conversions: { 'foot per second': 1.46667, 'meter per second': 0.44704, 'kilometer per hour': 1.60934, 'mile per hour': 1, 'knot': 0.868976 } },
+                    { name: 'knot', symbol: 'kn', conversions: { 'foot per second': 1.68781, 'meter per second': 0.514444, 'kilometer per hour': 1.852, 'mile per hour': 1.15078, 'knot': 1 } }
+                ],
+                temperature: [
+                    { name: 'celsius', symbol: '°C' },
+                    { name: 'fahrenheit', symbol: '°F' },
+                    { name: 'kelvin', symbol: 'K' }
+                ],
+                time: [
+                    { name: 'second', symbol: 's', conversions: { 'second': 1, 'minute': 0.0166667, 'hour': 0.000277778, 'day': 0.0000115741, 'week': 0.00000165344, 'month': 0.000000380517, 'year': 0.0000000317098 } },
+                    { name: 'minute', symbol: 'min', conversions: { 'second': 60, 'minute': 1, 'hour': 0.0166667, 'day': 0.000694444, 'week': 0.0000992063, 'month': 0.000022831, 'year': 0.00000190259 } },
+                    { name: 'hour', symbol: 'h', conversions: { 'second': 3600, 'minute': 60, 'hour': 1, 'day': 0.0416667, 'week': 0.00595238, 'month': 0.00136986, 'year': 0.000114155 } },
+                    { name: 'day', symbol: 'd', conversions: { 'second': 86400, 'minute': 1440, 'hour': 24, 'day': 1, 'week': 0.142857, 'month': 0.0328767, 'year': 0.00273973 } },
+                    { name: 'week', symbol: 'wk', conversions: { 'second': 604800, 'minute': 10080, 'hour': 168, 'day': 7, 'week': 1, 'month': 0.230137, 'year': 0.0191781 } },
+                    { name: 'month', symbol: 'mo', conversions: { 'second': 2628000, 'minute': 43800, 'hour': 730, 'day': 30.4167, 'week': 4.34524, 'month': 1, 'year': 0.0833333 } },
+                    { name: 'year', symbol: 'yr', conversions: { 'second': 31536000, 'minute': 525600, 'hour': 8760, 'day': 365, 'week': 52.1429, 'month': 12, 'year': 1 } }
+                ],
+                volume: [
+                    { name: 'fluid ounce', symbol: 'fl oz', conversions: { 'fluid ounce': 1, 'cup': 0.125, 'pint': 0.0625, 'quart': 0.03125, 'gallon': 0.0078125, 'milliliter': 29.5735, 'liter': 0.0295735, 'cubic meter': 0.0000295735 } },
+                    { name: 'cup', symbol: 'cup', conversions: { 'fluid ounce': 8, 'cup': 1, 'pint': 0.5, 'quart': 0.25, 'gallon': 0.0625, 'milliliter': 240, 'liter': 0.24, 'cubic meter': 0.00024 } },
+                    { name: 'pint', symbol: 'pt', conversions: { 'fluid ounce': 16, 'cup': 2, 'pint': 1, 'quart': 0.5, 'gallon': 0.125, 'milliliter': 473.176, 'liter': 0.473176, 'cubic meter': 0.000473176 } },
+                    { name: 'quart', symbol: 'qt', conversions: { 'fluid ounce': 32, 'cup': 4, 'pint': 2, 'quart': 1, 'gallon': 0.25, 'milliliter': 946.353, 'liter': 0.946353, 'cubic meter': 0.000946353 } },
+                    { name: 'gallon', symbol: 'gal', conversions: { 'fluid ounce': 128, 'cup': 16, 'pint': 8, 'quart': 4, 'gallon': 1, 'milliliter': 3785.41, 'liter': 3.78541, 'cubic meter': 0.00378541 } },
+                    { name: 'milliliter', symbol: 'mL', conversions: { 'fluid ounce': 0.033814, 'cup': 0.00422675, 'pint': 0.00211338, 'quart': 0.00105669, 'gallon': 0.000264172, 'milliliter': 1, 'liter': 0.001, 'cubic meter': 0.000001 } },
+                    { name: 'liter', symbol: 'L', conversions: { 'fluid ounce': 33.814, 'cup': 4.22675, 'pint': 2.11338, 'quart': 1.05669, 'gallon': 0.264172, 'milliliter': 1000, 'liter': 1, 'cubic meter': 0.001 } },
+                    { name: 'cubic meter', symbol: 'm³', conversions: { 'fluid ounce': 33814, 'cup': 4226.75, 'pint': 2113.38, 'quart': 1056.69, 'gallon': 264.172, 'milliliter': 1000000, 'liter': 1000, 'cubic meter': 1 } }
+                ],
+                weight: [
+                    { name: 'ounce', symbol: 'oz', conversions: { 'ounce': 1, 'pound': 0.0625, 'milligram': 28349.5, 'gram': 28.3495, 'kilogram': 0.0283495 } },
+                    { name: 'pound', symbol: 'lb', conversions: { 'ounce': 16, 'pound': 1, 'milligram': 453592, 'gram': 453.592, 'kilogram': 0.453592 } },
+                    { name: 'milligram', symbol: 'mg', conversions: { 'ounce': 0.000035274, 'pound': 0.00000220462, 'milligram': 1, 'gram': 0.001, 'kilogram': 0.000001 } },
+                    { name: 'gram', symbol: 'g', conversions: { 'ounce': 0.035274, 'pound': 0.00220462, 'milligram': 1000, 'gram': 1, 'kilogram': 0.001 } },
+                    { name: 'kilogram', symbol: 'kg', conversions: { 'ounce': 35.274, 'pound': 2.20462, 'milligram': 1000000, 'gram': 1000, 'kilogram': 1 } }
+                ]
+            };
+
+            function updateUnits() {
+                const category = elements.categorySelect.value;
+                const unitList = units[category] || [];
+                
+                elements.inputUnit.innerHTML = '';
+                elements.outputUnit.innerHTML = '';
+                
+                unitList.forEach(unit => {
+                    const inputOption = document.createElement('option');
+                    inputOption.value = unit.name;
+                    inputOption.textContent = `${unit.name} (${unit.symbol})`;
+                    elements.inputUnit.appendChild(inputOption);
+                    
+                    const outputOption = document.createElement('option');
+                    outputOption.value = unit.name;
+                    outputOption.textContent = `${unit.name} (${unit.symbol})`;
+                    elements.outputUnit.appendChild(outputOption);
+                });
+                
+                if (unitList.length > 1) {
+                    elements.outputUnit.selectedIndex = 1;
+                }
+            }
+
+            function convertTemperature(value, fromUnit, toUnit) {
+                let celsius;
+                
+                switch (fromUnit) {
+                    case 'celsius':
+                        celsius = value;
+                        break;
+                    case 'fahrenheit':
+                        celsius = (value - 32) * 5 / 9;
+                        break;
+                    case 'kelvin':
+                        celsius = value - 273.15;
+                        break;
+                }
+                
+                switch (toUnit) {
+                    case 'celsius':
+                        return celsius;
+                    case 'fahrenheit':
+                        return celsius * 9 / 5 + 32;
+                    case 'kelvin':
+                        return celsius + 273.15;
+                    default:
+                        return value;
+                }
+            }
+
+            function performConversion() {
+                const inputValue = parseFloat(elements.inputValue.value);
+                if (isNaN(inputValue)) {
+                    alert("Please enter a valid number");
+                    return;
+                }
+                
+                const category = elements.categorySelect.value;
+                const fromUnit = elements.inputUnit.value;
+                const toUnit = elements.outputUnit.value;
+                
+                let result;
+                
+                if (category === 'temperature') {
+                    result = convertTemperature(inputValue, fromUnit, toUnit);
+                } else {
+                    const unitData = units[category].find(u => u.name === fromUnit);
+                    if (unitData && unitData.conversions) {
+                        const conversionFactor = unitData.conversions[toUnit];
+                        if (conversionFactor !== undefined) {
+                            result = inputValue * conversionFactor;
+                        }
+                    }
+                }
+                
+                if (result !== undefined) {
+                    elements.outputValue.value = result.toFixed(6);
+                } else {
+                    alert("Conversion not supported between these units");
+                }
+            }
+
+            function swapUnits() {
+                const tempUnit = elements.inputUnit.value;
+                elements.inputUnit.value = elements.outputUnit.value;
+                elements.outputUnit.value = tempUnit;
+                
+                if (elements.inputValue.value && elements.outputValue.value) {
+                    const tempValue = elements.inputValue.value;
+                    elements.inputValue.value = elements.outputValue.value;
+                    elements.outputValue.value = tempValue;
+                } else if (elements.outputValue.value) {
+                    elements.inputValue.value = elements.outputValue.value;
+                    elements.outputValue.value = '';
+                }
+            }
+
+            function resetConverter() {
+                elements.inputValue.value = '';
+                elements.outputValue.value = '';
+                elements.categorySelect.selectedIndex = 0;
+                updateUnits();
+            }
+
+            function toggleTheme() {
+                elements.body.classList.toggle('night-mode');
+                const isNightMode = elements.body.classList.contains('night-mode');
+                localStorage.setItem('nightMode', isNightMode);
+                
+                const icon = elements.themeToggle.querySelector('i');
+                if (isNightMode) {
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                } else {
+                    icon.classList.remove('fa-sun');
+                    icon.classList.add('fa-moon');
+                }
+            }
+
+            function init() {
+                if (localStorage.getItem('nightMode') === 'true') {
+                    elements.body.classList.add('night-mode');
+                    const icon = elements.themeToggle.querySelector('i');
+                    icon.classList.remove('fa-moon');
+                    icon.classList.add('fa-sun');
+                }
+                
+                elements.categorySelect.addEventListener('change', updateUnits);
+                elements.convertBtn.addEventListener('click', performConversion);
+                elements.inputValue.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') performConversion();
+                });
+                elements.swapBtn.addEventListener('click', swapUnits);
+                elements.resetBtn.addEventListener('click', resetConverter);
+                elements.themeToggle.addEventListener('click', toggleTheme);
+                updateUnits();
+            }
+
+            init();
+        });
+    </script>
+</body>
+</html>
